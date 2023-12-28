@@ -110,25 +110,26 @@ i {
 
 .weather-icon {
   font-size: 60px;
-  padding: 20px;
-  margin-top: 10px;
+  padding: 10px;
+  margin-top: 0px;
 }
 
 h3 {
   text-align: center;
   font-size: 28px;
   white-space: nowrap;
+  color: #ffffff;
 }
 
 .times p {
   text-align: center;
   font-size: 40px;
-  color: #0634cc;
+  color: #ffffff;
 }
 
 .times .time {
   border-radius: 30px;
-  background-color: #ffffff;
+  background-color: #143249;
   padding: 20px;
   justify-content: center;
   align-items: center;
@@ -160,7 +161,7 @@ h3 {
 
 .hours .time {
   border-radius: 30px;
-  background-color: #ffffff;
+  background-color: #143249;
   padding: 20px;
   justify-content: center;
   align-items: center;
@@ -187,12 +188,12 @@ h3 {
 .days p {
   text-align: center;
   font-size: 40px;
-  color: #0634cc;
+  color: #ffffff;
 }
 
 .days .time {
   border-radius: 30px;
-  background-color: #ffffff;
+  background-color: #143249;
   padding: 20px;
   justify-content: center;
   align-items: center;
@@ -207,7 +208,7 @@ h3 {
 }
 
 .fa-snowflake {
-  color: #00FFFF;
+  color: #00ffff;
 }
 
 .fa-cloud-sun-rain {
@@ -215,7 +216,7 @@ h3 {
 }
 
 .fa-cloud-showers-heavy {
- color: gray;
+  color: gray;
 }
 
 .fa-cloud-bolt {
