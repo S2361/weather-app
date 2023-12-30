@@ -39,18 +39,18 @@ h2 {
   opacity: 0.5;
 }
 
-.topnav .search-bar .location {
+.topnav .location {
   color: white;
   padding: 9px;
   margin-top: 8px;
-  margin-right: 32px;
   font-size: 20px;
   border: #ffffff;
   border-width: 6px;
   background-color: #4b98d2;
-  border-radius: 10px 0px 0px 10px;
+  border-radius: 10px 10px 10px 10px;
   opacity: 0.5;
   list-style: none;
+  cursor: pointer;
 }
 
 .topnav input[type="text"]::placeholder {

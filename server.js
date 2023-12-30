@@ -1,8 +1,8 @@
 const apiKey = '86bc0c7700ff45abb28175214230911';
 const firstForecast = 'http://api.weatherapi.com/v1/forecast.json?key=86bc0c7700ff45abb28175214230911&q=';
-const secondForecase = '&days=3&aqi=yes&alerts=no';
+const secondForecast = '&days=3&aqi=yes&alerts=no';
 const searchAutocomplete = 'http://api.weatherapi.com/v1/search.json?key=86bc0c7700ff45abb28175214230911&q=';
-const collegePark = firstForecast + 'college park' + secondForecase;
+const collegePark = firstForecast + 'college park' + secondForecast;
 function dataLoader(weatherURL) {    
     fetch(weatherURL, {
         method: 'GET',
@@ -95,7 +95,7 @@ function updatePage() {
     // Get the user input
     const userInput = document.getElementById('searchInput').value;
 
-    dataLoader(firstForecast + userInput + secondForecase);
+    dataLoader(firstForecast + userInput + secondForecast);
 }
 
 async function updateSuggestions(){ 
@@ -105,6 +105,7 @@ async function updateSuggestions(){
         return;
     }
     console.log(inputValue);
+
     // Clearing suggestionsList
     suggestionsList.innerHTML = '';
 
@@ -117,6 +118,11 @@ async function updateSuggestions(){
         const resultElement = document.createElement('li');
         resultElement.textContent = result;
         resultElement.classList.add('location');
+        resultElement.addEventListener('click', function() {
+            dataLoader(firstForecast + resultElement.textContent + secondForecast);
+            document.getElementById('searchInput').value = resultElement.textContent;
+            suggestionsList.innerHTML = '';
+        });
         suggestionsList.appendChild(resultElement);
     });
 
