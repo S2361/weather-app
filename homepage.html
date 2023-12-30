@@ -15,9 +15,13 @@
 <body>
     <div class="topnav">
         <div class="search-bar">
-            <input type="text" placeholder="Search" name="search">
-            <button type="submit"><i class="fa fa-search"></i></button>
+            <input type="text" placeholder="Search" name="search" id="searchInput">
+            <button type="submit" onclick="updatePage()"><i class="fa fa-search"></i></button>
             <form action="/action/search_location.php">
+
+            <div class="search-bar" id="suggestionsContainer">
+                <ul id="suggestionsList"></ul>
+            </div>
         </div>
 
     </div>
@@ -186,7 +190,7 @@
             </div>
         </div>
     </div>
-    <script src="college-park.js"></script>
+    <script src="server.js"></script>
 
 </body>
 
