@@ -116,6 +116,7 @@ async function updateSuggestions(){
     possibleCities.forEach(result => {
         const resultElement = document.createElement('li');
         resultElement.textContent = result;
+        resultElement.classList.add('location');
         suggestionsList.appendChild(resultElement);
     });
 
