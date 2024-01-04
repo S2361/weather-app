@@ -3,7 +3,9 @@ const firstForecast = 'http://api.weatherapi.com/v1/forecast.json?key=86bc0c7700
 const secondForecast = '&days=3&aqi=yes&alerts=no';
 const searchAutocomplete = 'http://api.weatherapi.com/v1/search.json?key=86bc0c7700ff45abb28175214230911&q=';
 const collegePark = firstForecast + 'college park' + secondForecast;
-function dataLoader(weatherURL) {    
+let recentURL = collegePark;
+function dataLoader(weatherURL, day) {    
+    recentURL = weatherURL;
     fetch(weatherURL, {
         method: 'GET',
     })
@@ -17,22 +19,22 @@ function dataLoader(weatherURL) {
         const currentConditionLink = data.current.condition.icon;
         
         //const currentTemperatureCelsius = data.current.temp_c;
-        const currentTemperatureFahrenheit = data.current.temp_f;
+        const currentTemperatureFahrenheit = data.current.temp_f; //idk how to adjust when changing day
         const currentWindSpeed = data.current.wind_mph;
         const currentCloud = data.current.cloud;
         const currentHumidity = data.current.humidity;
 
         //Today's forecast temperatures
-        const morningTemperature = data.forecast.forecastday[0].hour[7].temp_f; //@7:00 am
-        const afternoonTemperature = data.forecast.forecastday[0].hour[13].temp_f; //@1:00 pm
-        const eveningTemperature = data.forecast.forecastday[0].hour[18].temp_f; //@6:00 pm
-        const nightTemperature = data.forecast.forecastday[0].hour[22].temp_f; //@10:00 pm
+        const morningTemperature = data.forecast.forecastday[day].hour[7].temp_f; //@7:00 am
+        const afternoonTemperature = data.forecast.forecastday[day].hour[13].temp_f; //@1:00 pm
+        const eveningTemperature = data.forecast.forecastday[day].hour[18].temp_f; //@6:00 pm
+        const nightTemperature = data.forecast.forecastday[day].hour[22].temp_f; //@10:00 pm
 
         //Today's forecast image links
-        const morningIconLink = data.forecast.forecastday[0].hour[7].condition.icon;
-        const afternoonIconLink = data.forecast.forecastday[0].hour[13].condition.icon;
-        const eveningIconLink = data.forecast.forecastday[0].hour[18].condition.icon;
-        const nightIconLink = data.forecast.forecastday[0].hour[22].condition.icon;
+        const morningIconLink = data.forecast.forecastday[day].hour[7].condition.icon;
+        const afternoonIconLink = data.forecast.forecastday[day].hour[13].condition.icon;
+        const eveningIconLink = data.forecast.forecastday[day].hour[18].condition.icon;
+        const nightIconLink = data.forecast.forecastday[day].hour[22].condition.icon;
 
         //Future forecast 3 days MAX temperatures (includes current day)
         //Should include min temperatures next to max
@@ -87,7 +89,7 @@ function dataLoader(weatherURL) {
         document.getElementById('followingTomorrowIcon').src = `https:${followingTomorrowOverallLink}`;
 
         //Retrieving 24 hours and icons from API
-        const hourlyAPI = data.forecast.forecastday[2].hour;
+        const hourlyAPI = data.forecast.forecastday[day].hour;
         const hourlyTempsIcons = [];
         hourlyAPI.forEach(hour => {
             let tempArray = [];
@@ -97,6 +99,9 @@ function dataLoader(weatherURL) {
         });
 
         const timesContainer = document.getElementById('timesContainer');
+
+        //Clear hourly temperatures
+        timesContainer.innerHTML = '';
 
         //Creating hour div elements
         let hourNumber = 12;
@@ -115,21 +120,32 @@ function dataLoader(weatherURL) {
 
     })
     .catch(error => console.error('Error:', error));
+    console.log("dataLoader executed for: " + weatherURL);
 }
 
 //Default display
-dataLoader(collegePark);
+dataLoader(collegePark, 0);
 
 //Creating possible suggestions for search-bar
 const searchInput = document.getElementById('searchInput');
 searchInput.addEventListener('input', updateSuggestions);
 
 //Allowing forecasted Days to be clickable
-/*
-const forecastedDays = document.querySelector('days', 'time');
-forecastedDays.addEventListener('click', )
-*/
-
+const forecastedDays = document.querySelectorAll('.days .time');
+forecastedDays.forEach(forecastedDay => {
+    forecastedDay.addEventListener('click', function(){
+        if(forecastedDay.classList.contains("today")) {
+            console.log("today");
+            dataLoader(recentURL, 0);
+        } else if(forecastedDay.classList.contains("tomorrow")){
+            console.log("tomorrow");
+            dataLoader(recentURL, 1);
+        } else {
+            console.log("following tomorrow");
+            dataLoader(recentURL, 2);
+        }
+    });
+});
 
 function updatePage() {
     // Get the user input
@@ -138,7 +154,7 @@ function updatePage() {
     // Clearing suggestionsList
     suggestionsList.innerHTML = '';
 
-    dataLoader(firstForecast + userInput + secondForecast);
+    dataLoader(firstForecast + userInput + secondForecast, 0);
 }
 
 async function updateSuggestions(){ 
@@ -163,7 +179,7 @@ async function updateSuggestions(){
         resultElement.textContent = result;
         resultElement.classList.add('location');
         resultElement.addEventListener('click', function() {
-            dataLoader(firstForecast + resultElement.textContent + secondForecast);
+            dataLoader(firstForecast + resultElement.textContent + secondForecast, 0);
             document.getElementById('searchInput').value = resultElement.textContent;
             suggestionsList.innerHTML = '';
         });
