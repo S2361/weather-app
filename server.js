@@ -6,8 +6,10 @@ const searchAutocomplete =
   "http://api.weatherapi.com/v1/search.json?key=86bc0c7700ff45abb28175214230911&q=";
 const collegePark = firstForecast + "college park" + secondForecast;
 let recentURL = collegePark;
+let recentDay = 0;
 function dataLoader(weatherURL, day, tempScale) {
   recentURL = weatherURL;
+  recentDay = day;
   fetch(weatherURL, {
     method: "GET",
   })
@@ -255,7 +257,7 @@ function updatePage() {
   // Clearing suggestionsList
   suggestionsList.innerHTML = "";
 
-  dataLoader(firstForecast + userInput + secondForecast, 0, tempScale);
+  dataLoader(firstForecast + userInput + secondForecast, recentDay, tempScale);
 }
 
 function changeToF() {
@@ -264,7 +266,7 @@ function changeToF() {
   if (search !== "") {
     updatePage();
   } else {
-    dataLoader(collegePark, 0, tempScale);
+    dataLoader(collegePark, recentDay, tempScale);
   }
 
   const optionTextSpan = document.querySelector(".option-text");
@@ -277,7 +279,7 @@ function changeToC() {
   if (search !== "") {
     updatePage();
   } else {
-    dataLoader(collegePark, 0, tempScale);
+    dataLoader(collegePark, recentDay, tempScale);
   }
 
   const optionTextSpan = document.querySelector(".option-text");
