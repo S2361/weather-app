@@ -63,7 +63,30 @@ function dataLoader(searchInput, tempScale) {
       //Writing to the html by ID for header
       document.getElementById("headingLocation").innerText =
         locationName + ", " + country;
-      document.getElementById("headingTime").innerText = localTime;
+      const time = localTime.split(" ")[1];
+      if (Number(time.split(":")[0]) >= 12) {
+        if (Number(time.split(":")[0]) == 12) {
+          document.getElementById("headingTime").innerText = time + " PM";
+        } else {
+          document.getElementById("headingTime").innerText =
+            (Number(time.split(":")[0]) - 12).toString() +
+            ":" +
+            time.split(":")[1] +
+            " PM";
+        }
+      } else {
+        if (Number(time.split(":")[0]) !== 0) {
+          document.getElementById("headingTime").innerText = time + " AM";
+        } else {
+          console.log();
+          document.getElementById("headingTime").innerText =
+            (Number(time.split(":")[0]) + 12).toString() +
+            ":" +
+            time.split(":")[1] +
+            " AM";
+        }
+      }
+
       document.getElementById("headingTemp").innerText =
         currentTemperatureFahrenheit + "° " + locationName + ", " + region;
 
