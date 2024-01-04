@@ -13,18 +13,36 @@ function dataLoader(weatherURL, day, tempScale) {
   })
     .then((res) => res.json())
     .then((data) => {
+
       // Accessing values from the response
       const locationName = data.location.name;
       const region = data.location.region;
       const country = data.location.country;
       const localTime = data.location.localtime;
-      const currentConditionLink = data.current.condition.icon;
+      let currentConditionLink = data.current.condition.icon;
+    
+      //Check if day > 0 if so then dont use .current
 
-      //const currentTemperatureCelsius = data.current.temp_c;
-      const currentTemperatureFahrenheit = data.current[tempScale]; //idk how to adjust when changing day
-      const currentWindSpeed = data.current.wind_mph;
-      const currentCloud = data.current.cloud;
-      const currentHumidity = data.current.humidity;
+      let currentTemperatureFahrenheit = data.current[tempScale]; //idk how to adjust when changing day
+      let currentWindSpeed = data.current.wind_mph;
+      let currentCloud = data.current.cloud;
+      let currentHumidity = data.current.humidity;
+      if(tempScale == "temp_c"){
+        currentWindSpeed = data.current.wind_kph;
+      }
+
+      //Checking if day > 0 then accomodate for those changes
+      if(day > 0){
+        currentConditionLink = data.forecast.forecastday[day].day.condition.icon;
+        currentTemperatureFahrenheit = data.forecast.forecastday[day].day[`max${tempScale}`];
+        currentWindSpeed = data.forecast.forecastday[day].day.maxwind_mph;
+        if(tempScale == "temp_c"){
+            currentWindSpeed = data.forecast.forecastday[day].day.maxwind_kph;
+        }
+        currentCloud = "";
+        currentHumidity = data.forecast.forecastday[day].day.avghumidity;
+
+      }
 
       //Today's forecast temperatures
       const morningTemperature =
@@ -104,18 +122,29 @@ function dataLoader(weatherURL, day, tempScale) {
       }
 
       //Writing to the html by ID for the general weather info
-      //Writing to the html by ID for the general weather info
       document.getElementById(
         "temperature"
       ).innerText = `Temperature: ${currentTemperatureFahrenheit} °${tempScale
         .slice(-1)
         .toUpperCase()}`;
-      document.getElementById(
-        "wind"
-      ).innerText = `Wind: ${currentWindSpeed} mph`;
-      document.getElementById(
-        "cloud"
-      ).innerText = `Cloud Coverage: ${currentCloud}%`;
+        if(tempScale == "temp_f"){
+            document.getElementById(
+            "wind"
+            ).innerText = `Wind: ${currentWindSpeed} mph`;
+        } else {
+            document.getElementById(
+            "wind"
+            ).innerText = `Wind: ${currentWindSpeed} kph`;
+        }
+        if(day == 0){
+            document.getElementById(
+            "cloud"
+            ).innerText = `Cloud Coverage: ${currentCloud}%`;
+        } else {
+            document.getElementById(
+            "cloud"
+            ).innerText = "";
+        }
       document.getElementById(
         "humidity"
       ).innerText = `Humidity: ${currentHumidity}%`;
