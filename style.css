@@ -18,9 +18,8 @@ h2 {
   overflow: hidden;
   background-color: #22577f;
   width: 100%;
-  height: 80px;
+  height: 10%;
   padding: 10px;
-  position: relative;
 }
 
 .dropdown {
@@ -222,7 +221,7 @@ h3 {
 .hours p {
   text-align: center;
   font-size: 40px;
-  color: #0634cc;
+  color: white;
 }
 
 .hours .time {
@@ -267,24 +266,5 @@ h3 {
   margin: 3%;
   display: flex;
   flex-direction: column;
-}
-
-.fa-sun {
-  color: #ffc800;
-}
-
-.fa-snowflake {
-  color: #00ffff;
-}
-
-.fa-cloud-sun-rain {
-  color: gray;
-}
-
-.fa-cloud-showers-heavy {
-  color: gray;
-}
-
-.fa-cloud-bolt {
-  color: yellow;
+  cursor: pointer;
 }
