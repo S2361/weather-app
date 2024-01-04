@@ -20,7 +20,7 @@ h2 {
   width: 100%;
   height: 10%;
   padding: 10px;
-  padding-right: 45%;
+  padding-right: 40%;
 }
 
 .topnav .search-bar {
@@ -32,6 +32,7 @@ h2 {
   padding: 9px;
   margin-top: 8px;
   font-size: 20px;
+  width: 300px;
   border: #ffffff;
   border-width: 6px;
   background-color: #4b98d2;
@@ -39,18 +40,22 @@ h2 {
   opacity: 0.5;
 }
 
-.topnav .location {
+.suggestions .location {
   color: white;
   padding: 9px;
-  margin-top: 8px;
   font-size: 20px;
-  border: #ffffff;
-  border-width: 6px;
+  border: 1px solid #4b98d2;
+  width: 300px;
   background-color: #4b98d2;
-  border-radius: 10px 10px 10px 10px;
-  opacity: 0.5;
   list-style: none;
   cursor: pointer;
+  border-bottom-color: white;
+}
+
+.suggestions {
+  margin-top: 10px;
+  z-index: 1;
+  position: absolute;
 }
 
 .topnav input[type="text"]::placeholder {

@@ -46,9 +46,14 @@ function dataLoader(weatherURL) {
         const followingTomorrowOverallLink = data.forecast.forecastday[2].day.condition.icon;
 
         //Writing to the html by ID for header
-        document.getElementById('headingLocation').innerText = locationName + ', ' + country;
         document.getElementById('headingTime').innerText = localTime;
-        document.getElementById('headingTemp').innerText = currentTemperatureFahrenheit + '° ' + locationName + ', ' + region;
+        if(region.length == 0) {
+            document.getElementById('headingTemp').innerText = currentTemperatureFahrenheit + '° ' + locationName + ', ' + country;
+            document.getElementById('headingLocation').innerText = locationName + ', ' + country;
+        } else {
+            document.getElementById('headingTemp').innerText = currentTemperatureFahrenheit + '° ' + locationName + ', ' + region + " " + country;
+            document.getElementById('headingLocation').innerText = locationName + ', ' + region;
+        }
 
         //Writing to the html by ID for the general weather info
         document.getElementById('temperature').innerText = `Temperature: ${currentTemperatureFahrenheit} °F`;
@@ -95,19 +100,23 @@ function updatePage() {
     // Get the user input
     const userInput = document.getElementById('searchInput').value;
 
+    // Clearing suggestionsList
+    suggestionsList.innerHTML = '';
+
     dataLoader(firstForecast + userInput + secondForecast);
 }
 
 async function updateSuggestions(){ 
     // Cleaning input value  
     const inputValue = searchInput.value.trim().toLowerCase();
+   
+    // Clearing suggestionsList
+    suggestionsList.innerHTML = '';
+
     if(inputValue.length == 0){
         return;
     }
     console.log(inputValue);
-
-    // Clearing suggestionsList
-    suggestionsList.innerHTML = '';
 
     // Determining what possible cities it could be
     const possibleCities = await possibleSuggestions(inputValue);
