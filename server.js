@@ -86,15 +86,50 @@ function dataLoader(weatherURL) {
         document.getElementById('tomorrowIcon').src = `https:${tomorrowOverallLink}`;
         document.getElementById('followingTomorrowIcon').src = `https:${followingTomorrowOverallLink}`;
 
+        //Retrieving 24 hours and icons from API
+        const hourlyAPI = data.forecast.forecastday[2].hour;
+        const hourlyTempsIcons = [];
+        hourlyAPI.forEach(hour => {
+            let tempArray = [];
+            tempArray.push(hour.temp_f);
+            tempArray.push(hour.condition.icon);
+            hourlyTempsIcons.push(tempArray);
+        });
+
+        const timesContainer = document.getElementById('timesContainer');
+
+        //Creating hour div elements
+        let hourNumber = 12;
+        hourlyTempsIcons.forEach(tempIcon => {
+            const hourTemp = tempIcon[0];
+            const hourIconLink = tempIcon[1];
+            const timeElement = createTimeElement(hourNumber, hourIconLink, hourTemp);
+            timesContainer.appendChild(timeElement);
+            hourNumber++;
+            if(hourNumber > 12){
+                hourNumber = 1;
+            }
+        });
+
+
 
     })
     .catch(error => console.error('Error:', error));
 }
 
+//Default display
 dataLoader(collegePark);
 
+//Creating possible suggestions for search-bar
 const searchInput = document.getElementById('searchInput');
 searchInput.addEventListener('input', updateSuggestions);
+
+//Allowing forecasted Days to be clickable
+/*
+const forecastedDays = document.querySelector('days', 'time');
+forecastedDays.addEventListener('click', )
+*/
+
 
 function updatePage() {
     // Get the user input
@@ -177,3 +212,18 @@ async function possibleSuggestions(inputCity){
         return listCities; // Return an empty array or handle the error as needed
     }
 }
+
+//Creates a div element for hourly temperatures
+function createTimeElement(time, iconLink, temperature) {
+    const timeElement = document.createElement('div');
+    timeElement.className = 'time';
+
+    timeElement.innerHTML = `
+      <h3>${time} AM/PM</h3>
+      <div class="weather-icon">
+        <img src="https:${iconLink}" alt="Weather Icon">
+      </div>
+      <p>${temperature}°</p>
+    `;
+    return timeElement;
+  }
