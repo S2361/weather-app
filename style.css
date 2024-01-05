@@ -263,7 +263,7 @@ h3 {
   justify-content: center;
   align-items: center;
   flex-basis: 25%;
-  margin: 3%;
+  margin: auto;
   display: flex;
   flex-direction: column;
   cursor: pointer;

@@ -41,7 +41,7 @@ function dataLoader(weatherURL, day, tempScale) {
         if(tempScale == "temp_c"){
             currentWindSpeed = data.forecast.forecastday[day].day.maxwind_kph;
         }
-        currentCloud = "";
+        currentCloud = data.forecast.forecastday[day].day[`min${tempScale}`];
         currentHumidity = data.forecast.forecastday[day].day.avghumidity;
 
       }
@@ -124,11 +124,6 @@ function dataLoader(weatherURL, day, tempScale) {
       }
 
       //Writing to the html by ID for the general weather info
-      document.getElementById(
-        "temperature"
-      ).innerText = `Temperature: ${currentTemperatureFahrenheit} °${tempScale
-        .slice(-1)
-        .toUpperCase()}`;
         if(tempScale == "temp_f"){
             document.getElementById(
             "wind"
@@ -140,12 +135,24 @@ function dataLoader(weatherURL, day, tempScale) {
         }
         if(day == 0){
             document.getElementById(
+                "temperature"
+              ).innerText = `Temperature: ${currentTemperatureFahrenheit} °${tempScale
+                .slice(-1)
+                .toUpperCase()}`;
+            document.getElementById(
             "cloud"
             ).innerText = `Cloud Coverage: ${currentCloud}%`;
         } else {
             document.getElementById(
+                "temperature"
+              ).innerText = `Max Temperature: ${currentTemperatureFahrenheit} °${tempScale
+                .slice(-1)
+                .toUpperCase()}`;
+            document.getElementById(
             "cloud"
-            ).innerText = "";
+            ).innerText = `Min Temperature: ${currentCloud} °${tempScale
+                .slice(-1)
+                .toUpperCase()}`;
         }
       document.getElementById(
         "humidity"
@@ -205,11 +212,12 @@ function dataLoader(weatherURL, day, tempScale) {
 
       //Creating hour div elements
       let hourNumber = 12;
+      let amPM = " AM";
       hourlyTempsIcons.forEach((tempIcon) => {
         const hourTemp = tempIcon[0];
         const hourIconLink = tempIcon[1];
         const timeElement = createTimeElement(
-          hourNumber,
+          hourNumber + amPM,
           hourIconLink,
           hourTemp
         );
@@ -218,7 +226,18 @@ function dataLoader(weatherURL, day, tempScale) {
         if (hourNumber > 12) {
           hourNumber = 1;
         }
+        if (hourNumber == 12){
+            amPM = " PM";
+        }
       });
+
+      //Creating dates for daily forecasts
+      const tomorrowDate = data.forecast.forecastday[1].date;
+      const followingTomorrowDate = data.forecast.forecastday[2].date;
+      const tomorrowArray = tomorrowDate.split("-");
+      const followingTomorrowArray = followingTomorrowDate.split("-");
+      document.getElementById("tomorrowDate").innerHTML = `${tomorrowArray[1]}/${tomorrowArray[2]}`;
+      document.getElementById("followingTomorrowDate").innerHTML = `${followingTomorrowArray[1]}/${followingTomorrowArray[2]}`;
     })
     .catch((error) => console.error("Error:", error));
   console.log("dataLoader executed for: " + weatherURL);
@@ -372,7 +391,7 @@ function createTimeElement(time, iconLink, temperature) {
   timeElement.className = "time";
 
   timeElement.innerHTML = `
-      <h3>${time} AM/PM</h3>
+      <h3>${time}</h3>
       <div class="weather-icon">
         <img src="https:${iconLink}" alt="Weather Icon">
       </div>
