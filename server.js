@@ -15,35 +15,36 @@ function dataLoader(weatherURL, day, tempScale) {
   })
     .then((res) => res.json())
     .then((data) => {
-
-      // Accessing values from the response
+      //Accessing values from the response
       const locationName = data.location.name;
       const region = data.location.region;
       const country = data.location.country;
       const localTime = data.location.localtime;
       let currentConditionLink = data.current.condition.icon;
-    
-      //Check if day > 0 if so then dont use .current
 
-      let currentTemperatureFahrenheit = data.current[tempScale]; //idk how to adjust when changing day
+      //Setting general weather info
+      let currentTemperatureFahrenheit = data.current[tempScale];
       let currentWindSpeed = data.current.wind_mph;
       let currentCloud = data.current.cloud;
       let currentHumidity = data.current.humidity;
-      if(tempScale == "temp_c"){
+
+      //Changing from mph to kph if in celsius
+      if (tempScale == "temp_c") {
         currentWindSpeed = data.current.wind_kph;
       }
 
       //Checking if day > 0 then accomodate for those changes
-      if(day > 0){
-        currentConditionLink = data.forecast.forecastday[day].day.condition.icon;
-        currentTemperatureFahrenheit = data.forecast.forecastday[day].day[`max${tempScale}`];
+      if (day > 0) {
+        currentConditionLink =
+          data.forecast.forecastday[day].day.condition.icon;
+        currentTemperatureFahrenheit =
+          data.forecast.forecastday[day].day[`max${tempScale}`];
         currentWindSpeed = data.forecast.forecastday[day].day.maxwind_mph;
-        if(tempScale == "temp_c"){
-            currentWindSpeed = data.forecast.forecastday[day].day.maxwind_kph;
+        if (tempScale == "temp_c") {
+          currentWindSpeed = data.forecast.forecastday[day].day.maxwind_kph;
         }
         currentCloud = data.forecast.forecastday[day].day[`min${tempScale}`];
         currentHumidity = data.forecast.forecastday[day].day.avghumidity;
-
       }
 
       //Today's forecast temperatures
@@ -67,7 +68,6 @@ function dataLoader(weatherURL, day, tempScale) {
         data.forecast.forecastday[day].hour[22].condition.icon;
 
       //Future forecast 3 days MAX temperatures (includes current day)
-      //Should include min temperatures next to max
       const todayMaxTemp = data.forecast.forecastday[0].day[`max${tempScale}`];
       const tomorrowMaxTemp =
         data.forecast.forecastday[1].day[`max${tempScale}`];
@@ -81,30 +81,40 @@ function dataLoader(weatherURL, day, tempScale) {
       const followingTomorrowOverallLink =
         data.forecast.forecastday[2].day.condition.icon;
 
-      //Writing to the html by ID for header
+      //Writing to the html by ID for headerTime
+      let amPM = ""; //Variable for whether its AM or PM
+      let hourNumber = 12; //Hour number to be displayed
       const time = localTime.split(" ")[1];
+      let hourIndex = Number(time.split(":")[0]);
       if (Number(time.split(":")[0]) >= 12) {
+        amPM = " PM";
         if (Number(time.split(":")[0]) == 12) {
-          document.getElementById("headingTime").innerText = time + " PM";
+          hourNumber = Number(time.split(":")[0]);
+          document.getElementById("headingTime").innerText = time + amPM;
         } else {
+          hourNumber = Number(time.split(":")[0]) - 12;
           document.getElementById("headingTime").innerText =
             (Number(time.split(":")[0]) - 12).toString() +
             ":" +
             time.split(":")[1] +
-            " PM";
+            amPM;
         }
       } else {
+        amPM = " AM";
         if (Number(time.split(":")[0]) !== 0) {
-          document.getElementById("headingTime").innerText = time + " AM";
+          hourNumber = Number(time.split(":")[0]);
+          document.getElementById("headingTime").innerText = time + amPM;
         } else {
-          console.log();
+          hourNumber = 0;
           document.getElementById("headingTime").innerText =
             (Number(time.split(":")[0]) + 12).toString() +
             ":" +
             time.split(":")[1] +
-            " AM";
+            amPM;
         }
       }
+
+      //Checking if there is region name available to use in headingLocation
       if (region.length == 0) {
         document.getElementById("headingTemp").innerText =
           currentTemperatureFahrenheit + "° " + locationName + ", " + country;
@@ -124,36 +134,36 @@ function dataLoader(weatherURL, day, tempScale) {
       }
 
       //Writing to the html by ID for the general weather info
-        if(tempScale == "temp_f"){
-            document.getElementById(
-            "wind"
-            ).innerText = `Wind: ${currentWindSpeed} mph`;
-        } else {
-            document.getElementById(
-            "wind"
-            ).innerText = `Wind: ${currentWindSpeed} kph`;
-        }
-        if(day == 0){
-            document.getElementById(
-                "temperature"
-              ).innerText = `Temperature: ${currentTemperatureFahrenheit} °${tempScale
-                .slice(-1)
-                .toUpperCase()}`;
-            document.getElementById(
-            "cloud"
-            ).innerText = `Cloud Coverage: ${currentCloud}%`;
-        } else {
-            document.getElementById(
-                "temperature"
-              ).innerText = `Max Temperature: ${currentTemperatureFahrenheit} °${tempScale
-                .slice(-1)
-                .toUpperCase()}`;
-            document.getElementById(
-            "cloud"
-            ).innerText = `Min Temperature: ${currentCloud} °${tempScale
-                .slice(-1)
-                .toUpperCase()}`;
-        }
+      if (tempScale == "temp_f") {
+        document.getElementById(
+          "wind"
+        ).innerText = `Wind: ${currentWindSpeed} mph`;
+      } else {
+        document.getElementById(
+          "wind"
+        ).innerText = `Wind: ${currentWindSpeed} kph`;
+      }
+      if (day == 0) {
+        document.getElementById(
+          "temperature"
+        ).innerText = `Temperature: ${currentTemperatureFahrenheit} °${tempScale
+          .slice(-1)
+          .toUpperCase()}`;
+        document.getElementById(
+          "cloud"
+        ).innerText = `Cloud Coverage: ${currentCloud}%`;
+      } else {
+        document.getElementById(
+          "temperature"
+        ).innerText = `Max Temperature: ${currentTemperatureFahrenheit} °${tempScale
+          .slice(-1)
+          .toUpperCase()}`;
+        document.getElementById(
+          "cloud"
+        ).innerText = `Min Temperature: ${currentCloud} °${tempScale
+          .slice(-1)
+          .toUpperCase()}`;
+      }
       document.getElementById(
         "humidity"
       ).innerText = `Humidity: ${currentHumidity}%`;
@@ -211,24 +221,27 @@ function dataLoader(weatherURL, day, tempScale) {
       timesContainer.innerHTML = "";
 
       //Creating hour div elements
-      let hourNumber = 12;
-      let amPM = " AM";
+      let index = 0;
+      console.log("hourindex" + hourIndex);
       hourlyTempsIcons.forEach((tempIcon) => {
-        const hourTemp = tempIcon[0];
-        const hourIconLink = tempIcon[1];
-        const timeElement = createTimeElement(
-          hourNumber + amPM,
-          hourIconLink,
-          hourTemp
-        );
-        timesContainer.appendChild(timeElement);
-        hourNumber++;
-        if (hourNumber > 12) {
-          hourNumber = 1;
-        }
-        if (hourNumber == 12){
+        if (index >= hourIndex) {
+          const hourTemp = tempIcon[0];
+          const hourIconLink = tempIcon[1];
+          const timeElement = createTimeElement(
+            hourNumber + amPM,
+            hourIconLink,
+            hourTemp
+          );
+          timesContainer.appendChild(timeElement);
+          hourNumber++;
+          if (hourNumber > 12) {
+            hourNumber = 1;
+          }
+          if (hourNumber == 12) {
             amPM = " PM";
+          }
         }
+        index++;
       });
 
       //Creating dates for daily forecasts
@@ -236,8 +249,12 @@ function dataLoader(weatherURL, day, tempScale) {
       const followingTomorrowDate = data.forecast.forecastday[2].date;
       const tomorrowArray = tomorrowDate.split("-");
       const followingTomorrowArray = followingTomorrowDate.split("-");
-      document.getElementById("tomorrowDate").innerHTML = `${tomorrowArray[1]}/${tomorrowArray[2]}`;
-      document.getElementById("followingTomorrowDate").innerHTML = `${followingTomorrowArray[1]}/${followingTomorrowArray[2]}`;
+      document.getElementById(
+        "tomorrowDate"
+      ).innerHTML = `${tomorrowArray[1]}/${tomorrowArray[2]}`;
+      document.getElementById(
+        "followingTomorrowDate"
+      ).innerHTML = `${followingTomorrowArray[1]}/${followingTomorrowArray[2]}`;
     })
     .catch((error) => console.error("Error:", error));
   console.log("dataLoader executed for: " + weatherURL);
@@ -269,6 +286,7 @@ forecastedDays.forEach((forecastedDay) => {
   });
 });
 
+//Updates page
 function updatePage() {
   // Get the user input
   const userInput = document.getElementById("searchInput").value;
@@ -279,6 +297,7 @@ function updatePage() {
   dataLoader(firstForecast + userInput + secondForecast, recentDay, tempScale);
 }
 
+//Changes temp scale used to F
 function changeToF() {
   tempScale = "temp_f";
   const search = document.getElementById("searchInput").value;
@@ -292,6 +311,7 @@ function changeToF() {
   optionTextSpan.textContent = "°F";
 }
 
+//Changes temp scale used to C
 function changeToC() {
   tempScale = "temp_c";
   const search = document.getElementById("searchInput").value;
@@ -309,6 +329,7 @@ function toggleDropdown() {
   document.getElementById("dropdown-content").classList.toggle("show");
 }
 
+//Updates and displays suggestions for locations
 async function updateSuggestions() {
   // Cleaning input value
   const inputValue = searchInput.value.trim().toLowerCase();
@@ -352,6 +373,7 @@ async function updateSuggestions() {
   //dataLoader(firstForecast + userInput + secondForecast);
 }
 
+//Returns a list of possible suggestions based on user input
 async function possibleSuggestions(inputCity) {
   let listCities = [];
 
