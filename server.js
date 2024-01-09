@@ -6,25 +6,46 @@ const searchAutocomplete =
   "http://api.weatherapi.com/v1/search.json?key=86bc0c7700ff45abb28175214230911&q=";
 const collegePark = firstForecast + "college park" + secondForecast;
 let recentURL = collegePark;
+let recentDay = 0;
 function dataLoader(weatherURL, day, tempScale) {
   recentURL = weatherURL;
+  recentDay = day;
   fetch(weatherURL, {
     method: "GET",
   })
     .then((res) => res.json())
     .then((data) => {
-      // Accessing values from the response
+      //Accessing values from the response
       const locationName = data.location.name;
       const region = data.location.region;
       const country = data.location.country;
       const localTime = data.location.localtime;
-      const currentConditionLink = data.current.condition.icon;
+      let currentConditionLink = data.current.condition.icon;
 
-      //const currentTemperatureCelsius = data.current.temp_c;
-      const currentTemperatureFahrenheit = data.current[tempScale]; //idk how to adjust when changing day
-      const currentWindSpeed = data.current.wind_mph;
-      const currentCloud = data.current.cloud;
-      const currentHumidity = data.current.humidity;
+      //Setting general weather info
+      let currentTemperatureFahrenheit = data.current[tempScale];
+      let currentWindSpeed = data.current.wind_mph;
+      let currentCloud = data.current.cloud;
+      let currentHumidity = data.current.humidity;
+
+      //Changing from mph to kph if in celsius
+      if (tempScale == "temp_c") {
+        currentWindSpeed = data.current.wind_kph;
+      }
+
+      //Checking if day > 0 then accomodate for those changes
+      if (day > 0) {
+        currentConditionLink =
+          data.forecast.forecastday[day].day.condition.icon;
+        currentTemperatureFahrenheit =
+          data.forecast.forecastday[day].day[`max${tempScale}`];
+        currentWindSpeed = data.forecast.forecastday[day].day.maxwind_mph;
+        if (tempScale == "temp_c") {
+          currentWindSpeed = data.forecast.forecastday[day].day.maxwind_kph;
+        }
+        currentCloud = data.forecast.forecastday[day].day[`min${tempScale}`];
+        currentHumidity = data.forecast.forecastday[day].day.avghumidity;
+      }
 
       //Today's forecast temperatures
       const morningTemperature =
@@ -47,7 +68,6 @@ function dataLoader(weatherURL, day, tempScale) {
         data.forecast.forecastday[day].hour[22].condition.icon;
 
       //Future forecast 3 days MAX temperatures (includes current day)
-      //Should include min temperatures next to max
       const todayMaxTemp = data.forecast.forecastday[0].day[`max${tempScale}`];
       const tomorrowMaxTemp =
         data.forecast.forecastday[1].day[`max${tempScale}`];
@@ -61,30 +81,40 @@ function dataLoader(weatherURL, day, tempScale) {
       const followingTomorrowOverallLink =
         data.forecast.forecastday[2].day.condition.icon;
 
-      //Writing to the html by ID for header
+      //Writing to the html by ID for headerTime
+      let amPM = ""; //Variable for whether its AM or PM
+      let hourNumber = 12; //Hour number to be displayed
       const time = localTime.split(" ")[1];
+      let hourIndex = Number(time.split(":")[0]);
       if (Number(time.split(":")[0]) >= 12) {
+        amPM = " PM";
         if (Number(time.split(":")[0]) == 12) {
-          document.getElementById("headingTime").innerText = time + " PM";
+          hourNumber = Number(time.split(":")[0]);
+          document.getElementById("headingTime").innerText = time + amPM;
         } else {
+          hourNumber = Number(time.split(":")[0]) - 12;
           document.getElementById("headingTime").innerText =
             (Number(time.split(":")[0]) - 12).toString() +
             ":" +
             time.split(":")[1] +
-            " PM";
+            amPM;
         }
       } else {
+        amPM = " AM";
         if (Number(time.split(":")[0]) !== 0) {
-          document.getElementById("headingTime").innerText = time + " AM";
+          hourNumber = Number(time.split(":")[0]);
+          document.getElementById("headingTime").innerText = time + amPM;
         } else {
-          console.log();
+          hourNumber = 0;
           document.getElementById("headingTime").innerText =
             (Number(time.split(":")[0]) + 12).toString() +
             ":" +
             time.split(":")[1] +
-            " AM";
+            amPM;
         }
       }
+
+      //Checking if there is region name available to use in headingLocation
       if (region.length == 0) {
         document.getElementById("headingTemp").innerText =
           currentTemperatureFahrenheit + "° " + locationName + ", " + country;
@@ -104,18 +134,36 @@ function dataLoader(weatherURL, day, tempScale) {
       }
 
       //Writing to the html by ID for the general weather info
-      //Writing to the html by ID for the general weather info
-      document.getElementById(
-        "temperature"
-      ).innerText = `Temperature: ${currentTemperatureFahrenheit} °${tempScale
-        .slice(-1)
-        .toUpperCase()}`;
-      document.getElementById(
-        "wind"
-      ).innerText = `Wind: ${currentWindSpeed} mph`;
-      document.getElementById(
-        "cloud"
-      ).innerText = `Cloud Coverage: ${currentCloud}%`;
+      if (tempScale == "temp_f") {
+        document.getElementById(
+          "wind"
+        ).innerText = `Wind: ${currentWindSpeed} mph`;
+      } else {
+        document.getElementById(
+          "wind"
+        ).innerText = `Wind: ${currentWindSpeed} kph`;
+      }
+      if (day == 0) {
+        document.getElementById(
+          "temperature"
+        ).innerText = `Temperature: ${currentTemperatureFahrenheit} °${tempScale
+          .slice(-1)
+          .toUpperCase()}`;
+        document.getElementById(
+          "cloud"
+        ).innerText = `Cloud Coverage: ${currentCloud}%`;
+      } else {
+        document.getElementById(
+          "temperature"
+        ).innerText = `Max Temperature: ${currentTemperatureFahrenheit} °${tempScale
+          .slice(-1)
+          .toUpperCase()}`;
+        document.getElementById(
+          "cloud"
+        ).innerText = `Min Temperature: ${currentCloud} °${tempScale
+          .slice(-1)
+          .toUpperCase()}`;
+      }
       document.getElementById(
         "humidity"
       ).innerText = `Humidity: ${currentHumidity}%`;
@@ -173,21 +221,40 @@ function dataLoader(weatherURL, day, tempScale) {
       timesContainer.innerHTML = "";
 
       //Creating hour div elements
-      let hourNumber = 12;
+      let index = 0;
+      console.log("hourindex" + hourIndex);
       hourlyTempsIcons.forEach((tempIcon) => {
-        const hourTemp = tempIcon[0];
-        const hourIconLink = tempIcon[1];
-        const timeElement = createTimeElement(
-          hourNumber,
-          hourIconLink,
-          hourTemp
-        );
-        timesContainer.appendChild(timeElement);
-        hourNumber++;
-        if (hourNumber > 12) {
-          hourNumber = 1;
+        if (index >= hourIndex) {
+          const hourTemp = tempIcon[0];
+          const hourIconLink = tempIcon[1];
+          const timeElement = createTimeElement(
+            hourNumber + amPM,
+            hourIconLink,
+            hourTemp
+          );
+          timesContainer.appendChild(timeElement);
+          hourNumber++;
+          if (hourNumber > 12) {
+            hourNumber = 1;
+          }
+          if (hourNumber == 12) {
+            amPM = " PM";
+          }
         }
+        index++;
       });
+
+      //Creating dates for daily forecasts
+      const tomorrowDate = data.forecast.forecastday[1].date;
+      const followingTomorrowDate = data.forecast.forecastday[2].date;
+      const tomorrowArray = tomorrowDate.split("-");
+      const followingTomorrowArray = followingTomorrowDate.split("-");
+      document.getElementById(
+        "tomorrowDate"
+      ).innerHTML = `${tomorrowArray[1]}/${tomorrowArray[2]}`;
+      document.getElementById(
+        "followingTomorrowDate"
+      ).innerHTML = `${followingTomorrowArray[1]}/${followingTomorrowArray[2]}`;
     })
     .catch((error) => console.error("Error:", error));
   console.log("dataLoader executed for: " + weatherURL);
@@ -219,6 +286,7 @@ forecastedDays.forEach((forecastedDay) => {
   });
 });
 
+//Updates page
 function updatePage() {
   // Get the user input
   const userInput = document.getElementById("searchInput").value;
@@ -226,29 +294,31 @@ function updatePage() {
   // Clearing suggestionsList
   suggestionsList.innerHTML = "";
 
-  dataLoader(firstForecast + userInput + secondForecast, 0, tempScale);
+  dataLoader(firstForecast + userInput + secondForecast, recentDay, tempScale);
 }
 
+//Changes temp scale used to F
 function changeToF() {
   tempScale = "temp_f";
   const search = document.getElementById("searchInput").value;
   if (search !== "") {
     updatePage();
   } else {
-    dataLoader(collegePark, 0, tempScale);
+    dataLoader(collegePark, recentDay, tempScale);
   }
 
   const optionTextSpan = document.querySelector(".option-text");
   optionTextSpan.textContent = "°F";
 }
 
+//Changes temp scale used to C
 function changeToC() {
   tempScale = "temp_c";
   const search = document.getElementById("searchInput").value;
   if (search !== "") {
     updatePage();
   } else {
-    dataLoader(collegePark, 0, tempScale);
+    dataLoader(collegePark, recentDay, tempScale);
   }
 
   const optionTextSpan = document.querySelector(".option-text");
@@ -259,6 +329,7 @@ function toggleDropdown() {
   document.getElementById("dropdown-content").classList.toggle("show");
 }
 
+//Updates and displays suggestions for locations
 async function updateSuggestions() {
   // Cleaning input value
   const inputValue = searchInput.value.trim().toLowerCase();
@@ -302,6 +373,7 @@ async function updateSuggestions() {
   //dataLoader(firstForecast + userInput + secondForecast);
 }
 
+//Returns a list of possible suggestions based on user input
 async function possibleSuggestions(inputCity) {
   let listCities = [];
 
@@ -341,7 +413,7 @@ function createTimeElement(time, iconLink, temperature) {
   timeElement.className = "time";
 
   timeElement.innerHTML = `
-      <h3>${time} AM/PM</h3>
+      <h3>${time}</h3>
       <div class="weather-icon">
         <img src="https:${iconLink}" alt="Weather Icon">
       </div>
