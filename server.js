@@ -82,7 +82,7 @@ function dataLoader(weatherURL, day, tempScale) {
         data.forecast.forecastday[2].day.condition.icon;
 
       //Writing to the html by ID for headerTime
-      let amPM = ""; //Variable for whether its AM or PM
+      let amPM = " AM"; //Variable for whether its AM or PM
       let hourNumber = 12; //Hour number to be displayed
       const time = localTime.split(" ")[1];
       let hourIndex = Number(time.split(":")[0]);
@@ -222,6 +222,10 @@ function dataLoader(weatherURL, day, tempScale) {
 
       //Creating hour div elements
       let index = 0;
+      if (day > 0) {
+        hourIndex = 0;
+        hourNumber = 12;
+      }
       console.log("hourindex" + hourIndex);
       hourlyTempsIcons.forEach((tempIcon) => {
         if (index >= hourIndex) {
