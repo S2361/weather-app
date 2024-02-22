@@ -10,8 +10,8 @@ Simple weather app that displays current weather and forecasts for locations spe
 * [Creators]
 
 ## Features 🌪
-* **Search Bar**
-  * Can use search bar to display weather of specific location
+### Search Bar
+Can use search bar to display weather of specific location
  
 ![image](https://github.com/S2361/weatherApp/assets/68034141/f2905de0-00b9-4646-92a2-90a1f17ffe9b)
 
