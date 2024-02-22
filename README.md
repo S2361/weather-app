@@ -7,6 +7,7 @@ Simple weather app that displays current weather and forecasts for locations spe
 ## Table of Contents 🌧
 * [Features](#features)
 * [Tools](#tools)
+* [Creators]
 
 ## Features 🌪
 * Search Bar
@@ -41,3 +42,7 @@ Simple weather app that displays current weather and forecasts for locations spe
 ## Tools 🌨
 * [Weather API](https://www.weatherapi.com/)
 * HTML, CSS, Javascript
+
+## Creators ⛅
+@S2361 and @patrickstarh7
+
