@@ -5,13 +5,12 @@ Simple weather app that displays current weather and forecasts for locations spe
 
 
 ## Table of Contents 🌧
-* General Info
-* Features
-* Tools
+* [Features](#features)
+* [Tools](#tools)
 
-## Features 🌨
+## Features 🌪
+* 
 
-
-## Tools 🌪
+## Tools 🌨
 * [Weather API](https://www.weatherapi.com/)
 * HTML, CSS, Javascript
