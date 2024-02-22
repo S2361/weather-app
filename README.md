@@ -9,7 +9,10 @@ Simple weather app that displays current weather and forecasts for locations spe
 * [Tools](#tools)
 
 ## Features 🌪
-* 
+* Today's Forecast
+** Temperature, Cloud Coverage, Humidity, Wind
+** Time, Location
+** Times of Day: Morning, Afternoon, Evening, Night
 
 ## Tools 🌨
 * [Weather API](https://www.weatherapi.com/)
