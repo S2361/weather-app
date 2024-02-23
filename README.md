@@ -9,7 +9,7 @@ Simple weather app that displays current weather and forecasts for locations spe
 * [Tools](#tools)
 * [Creators]
 
-## Features 🌪
+## Features 🌪 {#features}
 ### Search Bar
 Can use search bar to display weather of specific location
  
@@ -39,7 +39,7 @@ Can change temperatures displayed on website to Farenheit or Celsius
  
 ![image](https://github.com/S2361/weatherApp/assets/68034141/171eaafb-721b-449b-93dd-1ba9f13d2643)
 
-## Tools 🌨
+## Tools 🌨 {#tools}
 * [Weather API](https://www.weatherapi.com/)
 * HTML, CSS, Javascript
 
