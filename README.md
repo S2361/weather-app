@@ -5,9 +5,9 @@ Simple weather app that displays current weather and forecasts for locations spe
 
 
 ## Table of Contents 🌧
-- [Features 🌪 ](#features)
-- [Tools 🌨 ](#tools)
-- [Creators]
+- [Features](#features)
+- [Tools](#tools)
+- [Creators](#creators)
 
 ## Features 🌪 {#features}
 ### Search Bar
@@ -43,6 +43,6 @@ Can change temperatures displayed on website to Farenheit or Celsius
 * [Weather API](https://www.weatherapi.com/)
 * HTML, CSS, Javascript
 
-## Creators ⛅
+## Creators ⛅ {#creators}
 @S2361 and @patrickstarh7
 
