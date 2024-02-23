@@ -5,9 +5,9 @@ Simple weather app that displays current weather and forecasts for locations spe
 
 
 ## Table of Contents 🌧
-* [Features](#features)
-* [Tools](#tools)
-* [Creators]
+- [Features](#features)
+- [Tools](#tools)
+- [Creators]
 
 ## Features 🌪 {#features}
 ### Search Bar
